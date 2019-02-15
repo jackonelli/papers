@@ -3,6 +3,10 @@ use std::path::Path;
 use std::fs::OpenOptions;
 use std::io::{Error, ErrorKind, Write};
 use reqwest::{Url, UrlError};
+use std::fs;
+use std::io::BufReader;
+use std::io::prelude::*;
+
 
 pub fn parse_url(url: &str) -> Result<Url, UrlError> {
     match Url::parse(url) {
@@ -37,3 +41,14 @@ pub fn get_file_handle(fname: &str, resume_download: bool) -> io::Result<Box<Wri
     }
 }
 
+pub fn read_file(filepath: &str) -> String {
+    let file = fs::File::open(filepath)
+        .expect("could not open file");
+    let mut buffered_reader = BufReader::new(file);
+    let mut contents = String::new();
+    let _number_of_bytes: usize = match buffered_reader.read_to_string(&mut contents) {
+        Ok(number_of_bytes) => number_of_bytes,
+        Err(_err) => 0
+    };
+    contents
+}
